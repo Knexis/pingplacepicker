@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.rtchagas.pingplacepicker.PingPlacePicker
 import kotlinx.android.synthetic.main.activity_main.*
@@ -44,8 +45,10 @@ class MainActivity : AppCompatActivity() {
         if ((requestCode == pingActivityRequestCode) && (resultCode == Activity.RESULT_OK)) {
 
             val place: Place? = PingPlacePicker.getPlace(data!!)
+            val latLng: LatLng? = PingPlacePicker.getLatLng(data)
 
-            toast("You selected: ${place?.name}")
+            toast("You selected place: ${place?.name}")
+            toast("You selected latlng: ${latLng.toString()}")
         }
     }
 }

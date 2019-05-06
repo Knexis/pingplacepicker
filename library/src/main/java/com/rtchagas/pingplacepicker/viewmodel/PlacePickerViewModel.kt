@@ -8,6 +8,7 @@ import com.rtchagas.pingplacepicker.repository.PlaceRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 class PlacePickerViewModel constructor(private var repository: PlaceRepository)
     : BaseViewModel() {
@@ -43,17 +44,17 @@ class PlacePickerViewModel constructor(private var repository: PlaceRepository)
         return placeList
     }
 
-    fun getPlaceByLocation(location: LatLng): LiveData<Resource<Place?>> {
+    fun getPlaceByLocation(location: LatLng): LiveData<Resource<*>> {
 
-        val liveData = MutableLiveData<Resource<Place?>>()
+        val liveData = MutableLiveData<Resource<*>>()
 
         val disposable: Disposable = repository.getPlaceByLocation(location)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { liveData.value = Resource.loading() }
+                .doOnSubscribe { liveData.value = Resource.loading(location) as  Resource<*> }
                 .subscribe(
                         { result: Place? -> liveData.value = Resource.success(result) },
-                        { error: Throwable -> liveData.value = Resource.error(error) }
+                        { error: Throwable -> liveData.value = Resource.error(error, location) as Resource<*> }
                 )
 
         // Keep track of this disposable during the ViewModel lifecycle

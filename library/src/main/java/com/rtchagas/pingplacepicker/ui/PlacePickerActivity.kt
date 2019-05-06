@@ -42,6 +42,7 @@ import com.rtchagas.pingplacepicker.viewmodel.Resource
 import kotlinx.android.synthetic.main.activity_place_picker.*
 import org.jetbrains.anko.toast
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.util.*
 
 
 class PlacePickerActivity : AppCompatActivity(), PingKoinComponent,
@@ -170,6 +171,24 @@ class PlacePickerActivity : AppCompatActivity(), PingKoinComponent,
         data.putExtra(PingPlacePicker.EXTRA_PLACE, place)
         setResult(Activity.RESULT_OK, data)
         finish()
+        returnPlace(place)
+    }
+
+    private fun returnLatLng(data: LatLng){
+        val intent = Intent()
+        intent.putExtra(PingPlacePicker.EXTRA_PLACE, data)
+        returnData(intent)
+    }
+
+    private fun returnPlace(data: Place){
+        val intent = Intent()
+        intent.putExtra(PingPlacePicker.EXTRA_PLACE, data)
+        returnData(intent)
+    }
+
+    private fun returnData(intent: Intent){
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     private fun bindPlaces(places: List<Place>) {
@@ -284,17 +303,18 @@ class PlacePickerActivity : AppCompatActivity(), PingKoinComponent,
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    private fun handlePlaceByLocation(result: Resource<Place?>) {
+    private fun handlePlaceByLocation(result: Resource<*>) {
 
         when (result.status) {
             Resource.Status.LOADING -> {
                 pbLoading.show()
             }
             Resource.Status.SUCCESS -> {
-                result.data?.run { showConfirmPlacePopup(this) }
+                result.data?.run { showConfirmPlacePopup(this as Place) }
                 pbLoading.hide()
             }
             Resource.Status.ERROR -> {
+                result.data?.run { returnLatLng(this as LatLng) }
                 toast(R.string.picker_load_this_place_error)
                 pbLoading.hide()
             }

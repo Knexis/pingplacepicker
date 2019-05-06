@@ -6,6 +6,7 @@ import android.content.Intent
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import com.rtchagas.pingplacepicker.inject.PingKoinContext
 import com.rtchagas.pingplacepicker.inject.repositoryModule
@@ -77,7 +78,17 @@ class PingPlacePicker private constructor() {
         var geoLocationApiKey: String = ""
 
         fun getPlace(intent: Intent): Place? {
-            return intent.getParcelableExtra(EXTRA_PLACE)
+            val data: Any = intent.getParcelableExtra(EXTRA_PLACE)
+            if(data is Place)
+                return data
+            return null
+        }
+
+        fun getLatLng(intent: Intent): LatLng? {
+            val data: Any = intent.getParcelableExtra(EXTRA_PLACE)
+            if(data is LatLng)
+                return data
+            return null
         }
     }
 }
